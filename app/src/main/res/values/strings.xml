@@ -1,4 +1,10 @@
 <resources>
-    <string name="app_name">DorothyAlmacen</string>
+    <string name="app_name">Gestor de Almacén</string>
     <string name="warehouse_icon">🏬</string>
+    <string name="empleadoTitulo1">Gestión de Empleados</string>
+    <string name="empleadoInputNombre">Ingrese nombre de empleado</string>
+    <string name="empleadoInputContrasenia">Ingrese contraseña de empleado</string>
+    <string name="empleadoBtnBuscar">Buscar</string>
+    <string name="empleadoBtnAgregar">Agregar empleado</string>
+    <string name="mainRegresar">Regresar</string>
 </resources>

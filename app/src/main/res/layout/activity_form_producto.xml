@@ -25,7 +25,7 @@
         app:hintTextColor="#2196F3">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNombre"
+            android:id="@+id/txtNombreUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords" />

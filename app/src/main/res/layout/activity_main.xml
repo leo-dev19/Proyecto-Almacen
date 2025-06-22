@@ -58,7 +58,7 @@
                 app:hintTextColor="#3F51B5">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNombre"
+                    android:id="@+id/txtNombreUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName" />
@@ -74,7 +74,7 @@
                 app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etContrasena"
+                    android:id="@+id/txtContraseniaUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword" />
