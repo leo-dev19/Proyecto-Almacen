@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DorothyAlmacen"
         tools:targetApi="31">
+
+        <activity android:name=".producto.ProductosActivity" />
+        <activity android:name=".ProductosActivity1" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -21,6 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+    </application>
 </manifest>
