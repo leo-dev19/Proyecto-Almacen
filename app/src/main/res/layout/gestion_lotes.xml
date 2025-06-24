@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#8E24AA">
+
+    <!-- Título -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="25dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Lotes"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+    <!-- Contenedor blanco -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerLayout"
+        android:background="@drawable/header_lotes"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:attr/dividerVertical"
+            android:showDividers="middle"
+            android:dividerPadding="8dp">
+
+            <!-- Registro de Lote -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrar Lote"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:paddingTop="6dp"
+                android:layout_marginBottom="6dp"/>
+
+            <EditText
+                android:id="@+id/etIdLote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ID del Lote"
+                android:minHeight="48dp"
+                android:paddingVertical="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/campos_lotes" />
+
+            <EditText
+                android:id="@+id/etFechaRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de Registro"
+                android:inputType="date"
+                android:minHeight="48dp"
+                android:paddingVertical="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/campos_lotes" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo de lote"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:paddingTop="8dp"
+                android:layout_marginBottom="6dp"/>
+
+            <Spinner
+                android:id="@+id/spTipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_lotes"
+                android:entries="@array/tipo_lote"
+                android:minHeight="48dp"
+                android:padding="6dp"
+                android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/cbFragil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Es frágil?"
+                android:textColor="#000000" />
+
+            <!-- Detalle del Producto del Lote -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalle del Producto del Lote"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:textColor="#000000" />
+
+            <EditText
+                android:id="@+id/etIdDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ID Detalle"
+                android:minHeight="48dp"
+                android:paddingVertical="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/campos_lotes" />
+
+            <EditText
+                android:id="@+id/etStock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Stock"
+                android:inputType="number"
+                android:minHeight="48dp"
+                android:paddingVertical="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/campos_lotes" />
+
+            <EditText
+                android:id="@+id/etFechaVencimiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de Vencimiento"
+                android:inputType="date"
+                android:minHeight="48dp"
+                android:paddingVertical="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/campos_lotes" />
+
+            <!-- Producto Asociado -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Producto Asociado"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/tvProductoInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#EDE7F1"
+                android:padding="16dp"
+                android:text=""
+                android:textColor="#3F3F3F"
+                android:textSize="16sp"
+                android:elevation="2dp"
+                android:backgroundTint="#D1C4E9"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Botones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/btnGuardar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:backgroundTint="#8E24AA"
+                    android:backgroundTintMode="src_in"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginEnd="12dp"/>
+
+                <Button
+                    android:id="@+id/btnCancelar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    android:backgroundTint="#8E24AA"
+                    android:backgroundTintMode="src_in"
+                    android:textColor="#FFFFFF"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
