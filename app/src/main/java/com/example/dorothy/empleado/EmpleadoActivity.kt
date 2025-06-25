@@ -2,29 +2,28 @@ package com.example.dorothy.empleado
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.MainActivity
 import com.example.dorothy.R
 
 class EmpleadoActivity : AppCompatActivity() {
     private lateinit var empleadoDBHelper: EmpleadoDBHelper
-    private lateinit var listView: ListView
-    private lateinit var adapter: ArrayAdapter<String>
-    private var empleados = mutableListOf<Empleado>()
+    private lateinit var contenedorEmpleado: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_empleado)
 
-        listView = findViewById(R.id.listaEmpleados)
         empleadoDBHelper = EmpleadoDBHelper(this)
-        cargarListaEmpleados()
+        cargarListaEmpleados(null)
 
         findViewById<TextView>(R.id.lblNombreUser).text = intent.getStringExtra("usuario")
 
@@ -39,12 +38,27 @@ class EmpleadoActivity : AppCompatActivity() {
             intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+        var btnBuscar : Button = findViewById(R.id.btnBuscar)
+        btnBuscar.setOnClickListener {
+            var nombreEmpleado = findViewById<EditText>(R.id.txtBuscarNombre).text
+            if(nombreEmpleado == null || nombreEmpleado.toString().isEmpty()){
+                cargarListaEmpleados(null)
+                Toast.makeText(this, "Ingrese un nombre de empleado", Toast.LENGTH_SHORT).show()
+            }else{
+                cargarListaEmpleados(nombreEmpleado.toString())
+            }
+        }
     }
 
-    fun cargarListaEmpleados() {
-        empleados = empleadoDBHelper.obtenerEmpleados(null).toMutableList()
-        val nombres = empleados.map { "${it.nombre}, rol: ${it.rol}, Contra: ${ it.contrasenia }" }
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, nombres)
-        listView.adapter = adapter
+    fun cargarListaEmpleados(nombre : String?) {
+        var empleados = empleadoDBHelper.obtenerEmpleados(nombre).toMutableList()
+
+        contenedorEmpleado = findViewById(R.id.listaEmpleados)
+        contenedorEmpleado.layoutManager = LinearLayoutManager(this)
+        var adaptador = EmpleadoAdapter(this, empleados){
+            cargarListaEmpleados(null)
+        }
+        contenedorEmpleado.adapter = adaptador
     }
 }

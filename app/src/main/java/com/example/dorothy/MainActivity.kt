@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         usuarioContrasenia = findViewById(R.id.txtContraseniaUser)
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion)
 
-
         btnIniciarSesion.setOnClickListener{
             val empleado = Empleado(
                 0, usuarioNombre.text.toString(),"","",

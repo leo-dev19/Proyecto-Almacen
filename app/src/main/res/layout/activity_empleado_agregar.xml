@@ -8,6 +8,20 @@
     tools:context=".empleado.EmpleadoAgregarActivity">
 
     <Button
+        android:id="@+id/btnConfirmarAgregar"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="122dp"
+        android:layout_height="55dp"
+        android:text="Guardar cambios"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.892"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.786" />
+
+    <Button
         android:id="@+id/btnRegresarEmpleados"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="122dp"
@@ -20,21 +34,7 @@
         app:layout_constraintHorizontal_bias="0.076"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.723" />
-
-    <Button
-        android:id="@+id/btnConfirmarAgregar"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="122dp"
-        android:layout_height="55dp"
-        android:text="Guardar cambios"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.892"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.723" />
+        app:layout_constraintVertical_bias="0.786" />
 
     <EditText
         android:id="@+id/txtNombreEmpleado"
@@ -76,10 +76,10 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.168"
+        app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.439" />
+        app:layout_constraintVertical_bias="0.545" />
 
     <TextView
         android:id="@+id/lblTitulo3"
@@ -121,6 +121,19 @@
         app:layout_constraintVertical_bias="0.254" />
 
     <TextView
+        android:id="@+id/lblTitulo8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rol"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.056"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.389" />
+
+    <TextView
         android:id="@+id/lblTitulo7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,10 +141,9 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.391" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/lblTitulo4"
@@ -145,4 +157,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05" />
+
+    <Spinner
+        android:id="@+id/cbxRol"
+        android:layout_width="287dp"
+        android:layout_height="52dp"
+        android:entries="@array/empleadoRolListado"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.181"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.423" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

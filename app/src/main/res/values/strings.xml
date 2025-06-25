@@ -7,4 +7,12 @@
     <string name="empleadoBtnBuscar">Buscar</string>
     <string name="empleadoBtnAgregar">Agregar empleado</string>
     <string name="mainRegresar">Regresar</string>
+
+    <string-array name="empleadoRolListado">
+        <item>Encargado de lotes</item>
+        <item>Encargado de productos</item>
+        <item>Encargado de clientes</item>
+        <item>Jefe de area</item>
+        <item>Administrador</item>
+    </string-array>
 </resources>

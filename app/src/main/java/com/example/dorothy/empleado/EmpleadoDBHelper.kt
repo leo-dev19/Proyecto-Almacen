@@ -49,7 +49,7 @@ class EmpleadoDBHelper(context: Context): SQLiteOpenHelper(context, "empleadosdb
                 if(nombre == null){
                     lista.add(empleado)
                 }
-                if(nombre != null && nombre == cursor.getString(1)){
+                if(nombre != null && cursor.getString(1).contains(nombre)){
                     lista.add(empleado)
                 }
             }
