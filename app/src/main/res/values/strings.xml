@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">DorothyAlmacen</string>
     <string name="warehouse_icon">🏬</string>
+
+    <!-- Gestion de Lotes -->
+    <string name="titulo_gestion_lotes">Gestión de Lotes</string>
+    <string name="registrar_lote">Registrar Lote</string>
+    <string name="detalle_producto_lote">Detalle del Producto del Lote</string>
+    <string name="producto_asociado">Producto Asociado</string>
+    <string name="guardar">Guardar</string>
+    <string name="cancelar">Cancelar</string>
+
+    <!-- Spinner de tipo de lote -->
+    <string-array name="tipo_lote">
+        <item>Entrada</item>
+        <item>Salida</item>
+    </string-array>
 </resources>
