@@ -229,7 +229,7 @@
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textAlignment="center"
-                            android:textColor="#212121" /> <!-- Color negro/gris oscuro -->
+                            android:textColor="#212121" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
