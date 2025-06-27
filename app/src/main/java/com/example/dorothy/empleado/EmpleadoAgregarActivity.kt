@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.dorothy.R
 
 
-class EmpleadoAgregarActivity : AppCompatActivity() {
+class EmpleadoAgregarActivity() : AppCompatActivity() {
     private lateinit var empleadoDBHelper: EmpleadoDBHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_empleado_agregar)
-        empleadoDBHelper = EmpleadoDBHelper(this)
+        empleadoDBHelper = EmpleadoDBHelper()
 
         var btnAgregar : Button = findViewById(R.id.btnConfirmarAgregar)
         var btnRegresar : Button = findViewById(R.id.btnRegresarEmpleados)
@@ -36,12 +36,12 @@ class EmpleadoAgregarActivity : AppCompatActivity() {
             )
 
             if(validarEmpleado(empleado)){
-                try {
-                    empleadoDBHelper.insertarEmpleado(empleado)
-                    intent = Intent(this, EmpleadoActivity::class.java)
-                    startActivity(intent)
-                }catch (ex: Exception){
-                    Toast.makeText(this, "A ocurrido un error al agregar", Toast.LENGTH_SHORT).show()
+                empleadoDBHelper.insertarEmpleado(empleado){ exito, mensaje ->
+                    Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+                    if(exito){
+                        intent = Intent(this, EmpleadoActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
             }else{
                 Toast.makeText(this, "Debe ingresar datos validos", Toast.LENGTH_SHORT).show()

@@ -12,17 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.MainActivity
 import com.example.dorothy.R
+import com.google.firebase.firestore.FirebaseFirestore
 
-class EmpleadoActivity : AppCompatActivity() {
+class EmpleadoActivity() : AppCompatActivity() {
     private lateinit var empleadoDBHelper: EmpleadoDBHelper
     private lateinit var contenedorEmpleado: RecyclerView
+    private val firebaseInstancia = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_empleado)
 
-        empleadoDBHelper = EmpleadoDBHelper(this)
+        empleadoDBHelper = EmpleadoDBHelper()
         cargarListaEmpleados(null)
 
         findViewById<TextView>(R.id.lblNombreUser).text = intent.getStringExtra("usuario")

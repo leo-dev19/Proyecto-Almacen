@@ -12,13 +12,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.R
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FirebaseFirestore
 
 class EmpleadoAdapter(
     private val context: Context,
     private val lista: List<Empleado>,
     private val onDataChanged: () -> Unit
 ) : RecyclerView.Adapter<EmpleadoAdapter.EmpleadoViewHolder>() {
-    val empleadoDBHelper = EmpleadoDBHelper(context)
+    val empleadoDBHelper = EmpleadoDBHelper()
 
     class EmpleadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombre: TextView = itemView.findViewById(R.id.lblNombre)
@@ -67,16 +68,16 @@ class EmpleadoAdapter(
                 empleado.rol = inputRol.text.toString()
                 empleado.contrasenia = inputContrasenia.text.toString()
 
-                empleadoDBHelper.actualizarEmpleado(empleado)
-                onDataChanged()
+                empleadoDBHelper.actualizarEmpleado(empleado){ exito, mensaje ->
+                    onDataChanged()
+                }
             }
             .setNegativeButton("Eliminar") { _, _ ->
-                empleadoDBHelper.eliminarEmpleado(empleado.codigo)
-                onDataChanged()
+                empleadoDBHelper.eliminarEmpleado(empleado.codigo) { exito, mensaje ->
+                    onDataChanged()
+                }
             }
             .setNeutralButton("Cancelar", null)
             .show()
     }
-
-
 }

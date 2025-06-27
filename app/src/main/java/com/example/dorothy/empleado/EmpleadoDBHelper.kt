@@ -1,87 +1,93 @@
 package com.example.dorothy.empleado
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
-class EmpleadoDBHelper(context: Context): SQLiteOpenHelper(context, "empleadosdb.db", null, 3) {
-    override fun onCreate(db: SQLiteDatabase) {
-        val createTable = """
-        CREATE TABLE empleados (
-        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        apellido REAL,
-        rol INTEGER,
-        contrasenia TEXT
-        )
-        """
-        db.execSQL(createTable)
-    }
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS empleados")
-        onCreate(db)
-    }
+class EmpleadoDBHelper() {
+    private val db = FirebaseFirestore.getInstance()
+    private val collectionNombre : String = "empleados"
 
-    fun insertarEmpleado(empleado: Empleado): Long {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", empleado.nombre)
-            put("apellido", empleado.apellido)
-            put("rol", empleado.rol)
-            put("contrasenia", empleado.contrasenia)
-        }
-        return db.insert("empleados", null, values)
-    }
-    fun obtenerEmpleados(nombre: String?): List<Empleado> {
-        val lista = mutableListOf<Empleado>()
-        try{
-            val db = readableDatabase
-            val cursor = db.rawQuery("SELECT * FROM empleados", null)
-            while (cursor.moveToNext()) {
-                val empleado = Empleado(
-                    codigo = cursor.getInt(0),
-                    nombre = cursor.getString(1),
-                    apellido = cursor.getString(2),
-                    rol = cursor.getString(3),
-                    contrasenia = cursor.getString(4)
-                )
-                if(nombre == null){
-                    lista.add(empleado)
-                }
-                if(nombre != null && cursor.getString(1).contains(nombre)){
-                    lista.add(empleado)
-                }
+    fun generarCodigoEmpleado(onResult: (String) -> Unit) {
+        db.collection(collectionNombre)
+            .orderBy("codigo", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { docs ->
+                val ultimoCodigo = docs.firstOrNull()?.getString("codigo") ?: "E000"
+                val nuevoNumero = ultimoCodigo.substring(1).toInt() + 1
+                val nuevoCodigo = "E" + nuevoNumero.toString().padStart(3, '0')
+                onResult(nuevoCodigo)
             }
-            cursor.close()
-        }catch (ex: Exception){
-            val empleado = Empleado(0, "Error de servidor", "", ""+ex.message.toString(), "Prueba de nuevo")
-            lista.add(empleado)
-            return lista
+            .addOnFailureListener { onResult("E001") }
+    }
+
+    fun insertarEmpleado(empleado: Empleado, onResult: (Boolean, String) -> Unit) {
+        generarCodigoEmpleado { codigo ->
+            val empleadoConCodigo = empleado.copy(codigo = codigo)
+            db.collection(collectionNombre)
+                .document(codigo)
+                .set(empleadoConCodigo)
+                .addOnSuccessListener {
+                    onResult(true, "Nuevo Empleado "+codigo)
+                }
+                .addOnFailureListener { e ->
+                    onResult(false, e.message ?: "Error desconocido")
+                }
+        }
+    }
+    fun obtenerEmpleados(nombre: String?, onResult: (List<Empleado>) -> Unit) {
+        db.collection(collectionNombre)
+            .get()
+            .addOnSuccessListener { resultado ->
+                val lista = resultado.documents.mapNotNull { doc ->
+                    val empleado = doc.toObject(Empleado::class.java)
+                    if (empleado != null) {
+                        if (nombre == null || "${empleado.nombre} ${empleado.apellido}".contains(nombre, true)) {
+                            empleado
+                        } else null
+                    } else null
+                }
+                onResult(lista)
+            }
+            .addOnFailureListener {
+                onResult(emptyList())
+            }
+    }
+
+    fun obtenerEmpleados(nombre: String?) : List<Empleado>{
+        var lista : List<Empleado> = emptyList()
+        obtenerEmpleados(nombre){ resultado ->
+            lista = resultado
         }
         return lista
     }
+
     fun verificarEmpleado(nombre : String, contrasenia : String) : Boolean{
-        if(obtenerEmpleados(null).isEmpty()) return true
         for (e in obtenerEmpleados(null)){
-            if(e.nombre == nombre && e.contrasenia == contrasenia) {
-                return true
-            }
+            if(e.nombre == nombre && e.contrasenia == contrasenia) return true
         }
         return false
     }
-    fun actualizarEmpleado(empleado: Empleado): Int {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", empleado.nombre)
-            put("apellido", empleado.apellido)
-            put("rol", empleado.rol)
-            put("contrasenia", empleado.contrasenia)
-        }
-        return db.update("empleados", values, "codigo=?", arrayOf(empleado.codigo.toString()))
+    fun actualizarEmpleado(empleado: Empleado, onResult: (Boolean, String) -> Unit) {
+        db.collection(collectionNombre)
+            .document(empleado.codigo)
+            .set(empleado)
+            .addOnSuccessListener {
+                onResult(true, "Empleado ${empleado.codigo} actualizado")
+            }
+            .addOnFailureListener { e ->
+                onResult(false, e.message ?: "Error al actualizar empleado")
+            }
     }
-    fun eliminarEmpleado(codigo: Int): Int {
-        val db = writableDatabase
-        return db.delete("empleados", "codigo=?", arrayOf(codigo.toString()))
+    fun eliminarEmpleado(codigo: String, onResult: (Boolean, String) -> Unit) {
+        db.collection(collectionNombre)
+            .document(codigo)
+            .delete()
+            .addOnSuccessListener {
+                onResult(true, "Empleado $codigo eliminado")
+            }
+            .addOnFailureListener { e ->
+                onResult(false, e.message ?: "Error al eliminar empleado")
+            }
     }
 }
