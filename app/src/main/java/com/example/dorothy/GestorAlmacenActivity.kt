@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dorothy.almacen.AlmacenesActivity
 import com.example.dorothy.empleado.EmpleadoActivity
 import com.example.dorothy.lotes.GestionLotesActivity
 
@@ -17,6 +18,7 @@ class GestorAlmacenActivity : AppCompatActivity() {
         val cardEmpleados = findViewById<LinearLayout>(R.id.cardEmpleados)
         val cardProductos = findViewById<LinearLayout>(R.id.cardProductos)
         val cardAlmacenes = findViewById<LinearLayout>(R.id.cardAlmacenes)
+        val cardClientes = findViewById<LinearLayout>(R.id.cardClientes)
 
         intent.putExtra("nombre", intent.getStringExtra("nombre"))
         intent.putExtra("rol", intent.getStringExtra("rol"))
@@ -35,7 +37,13 @@ class GestorAlmacenActivity : AppCompatActivity() {
         }
 
         cardAlmacenes.setOnClickListener {
-            // Intent para GestionAlmacenesActivity
+            intent = Intent(this, AlmacenesActivity::class.java)
+            startActivity(intent)
+        }
+
+        cardClientes.setOnClickListener {
+            intent = Intent(this, ListarClientesActivity::class.java)
+            startActivity(intent)
         }
     }
 }
