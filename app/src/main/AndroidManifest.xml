@@ -13,9 +13,40 @@
         android:theme="@style/Theme.DorothyAlmacen"
         tools:targetApi="31">
 
-        <activity android:name=".producto.ProductosActivity" />
-        <activity android:name=".ProductosActivity1" />
+
         <activity
+            android:name=".empleado.EmpleadoAgregarActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".empleado.EmpleadoActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".GestorAlmacenActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".ListarClientesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".cliente.NuevoCliente"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".almacen.AlmacenesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+
+        <activity
+            android:name=".producto.ProductosActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+
+
+        <activity
+
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
