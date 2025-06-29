@@ -15,4 +15,19 @@
         <item>Entrada</item>
         <item>Salida</item>
     </string-array>
+
+    <string name="empleadoTitulo1">Gestión de Empleados</string>
+    <string name="empleadoInputNombre">Ingrese nombre de empleado</string>
+    <string name="empleadoInputContrasenia">Ingrese contraseña de empleado</string>
+    <string name="empleadoBtnBuscar">Buscar</string>
+    <string name="empleadoBtnAgregar">Agregar empleado</string>
+    <string name="mainRegresar">Regresar</string>
+
+    <string-array name="empleadoRolListado">
+        <item>Encargado de lotes</item>Add commentMore actions
+        <item>Encargado de productos</item>
+        <item>Encargado de clientes</item>
+        <item>Jefe de area</item>
+        <item>Administrador</item>
+    </string-array>
 </resources>

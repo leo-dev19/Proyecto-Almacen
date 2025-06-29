@@ -28,7 +28,7 @@ class EmpleadoDBHelper() {
                 .document(codigo)
                 .set(empleadoConCodigo)
                 .addOnSuccessListener {
-                    onResult(true, "Nuevo Empleado "+codigo)
+                    onResult(true, "Nuevo Empleado $codigo")
                 }
                 .addOnFailureListener { e ->
                     onResult(false, e.message ?: "Error desconocido")
@@ -42,9 +42,7 @@ class EmpleadoDBHelper() {
             .addOnSuccessListener { resultado ->
                 for(doc in resultado){
                     val empleado = doc.toObject(Empleado::class.java)
-                    if (empleado != null) {
-                        lista.add(empleado)
-                    } else null
+                    lista.add(empleado)
                 }
                 onResult(lista)
             }
