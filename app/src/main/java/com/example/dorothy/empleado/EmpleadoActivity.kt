@@ -12,12 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.MainActivity
 import com.example.dorothy.R
-import com.google.firebase.firestore.FirebaseFirestore
 
 class EmpleadoActivity() : AppCompatActivity() {
     private lateinit var empleadoDBHelper: EmpleadoDBHelper
     private lateinit var contenedorEmpleado: RecyclerView
-    private val firebaseInstancia = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,13 +52,14 @@ class EmpleadoActivity() : AppCompatActivity() {
     }
 
     fun cargarListaEmpleados(nombre : String?) {
-        var empleados = empleadoDBHelper.obtenerEmpleados(nombre).toMutableList()
-
-        contenedorEmpleado = findViewById(R.id.listaEmpleados)
-        contenedorEmpleado.layoutManager = LinearLayoutManager(this)
-        var adaptador = EmpleadoAdapter(this, empleados){
-            cargarListaEmpleados(null)
+        empleadoDBHelper.obtenerEmpleados(nombre){ resultado ->
+            contenedorEmpleado = findViewById(R.id.listaEmpleados)
+            contenedorEmpleado.layoutManager = LinearLayoutManager(this)
+            var adaptador = EmpleadoAdapter(this, resultado) { exito ->
+                if(exito) cargarListaEmpleados(null)
+            }
+            if(resultado.isEmpty()) Toast.makeText(this, "No hay empleados disponibles con $nombre", Toast.LENGTH_SHORT).show()
+            contenedorEmpleado.adapter = adaptador
         }
-        contenedorEmpleado.adapter = adaptador
     }
 }

@@ -35,16 +35,15 @@ class EmpleadoDBHelper() {
                 }
         }
     }
-    fun obtenerEmpleados(nombre: String?, onResult: (List<Empleado>) -> Unit) {
+    fun obtenerEmpleados(onResult: (List<Empleado>) -> Unit) {
+        val lista = mutableListOf<Empleado>()
         db.collection(collectionNombre)
             .get()
             .addOnSuccessListener { resultado ->
-                val lista = resultado.documents.mapNotNull { doc ->
+                for(doc in resultado){
                     val empleado = doc.toObject(Empleado::class.java)
                     if (empleado != null) {
-                        if (nombre == null || "${empleado.nombre} ${empleado.apellido}".contains(nombre, true)) {
-                            empleado
-                        } else null
+                        lista.add(empleado)
                     } else null
                 }
                 onResult(lista)
@@ -54,19 +53,27 @@ class EmpleadoDBHelper() {
             }
     }
 
-    fun obtenerEmpleados(nombre: String?) : List<Empleado>{
-        var lista : List<Empleado> = emptyList()
-        obtenerEmpleados(nombre){ resultado ->
-            lista = resultado
+    fun obtenerEmpleados(nombre: String?, onResult: (List<Empleado>) -> Unit){
+        var lista = mutableListOf<Empleado>()
+        obtenerEmpleados{ resultado ->
+            for(r in resultado){
+                if(nombre == null || r.nombre.contains(nombre) || r.apellido.contains(nombre)) lista.add(r)
+            }
+            onResult(lista)
         }
-        return lista
     }
 
-    fun verificarEmpleado(nombre : String, contrasenia : String) : Boolean{
-        for (e in obtenerEmpleados(null)){
-            if(e.nombre == nombre && e.contrasenia == contrasenia) return true
+    fun verificarEmpleado(nombre : String, contrasenia : String, onResult: (Boolean) -> Unit){
+        obtenerEmpleados(nombre){ resultado ->
+            var estaMal = true
+            for (e in resultado){
+                if(e.contrasenia == contrasenia) {
+                    onResult(true)
+                    estaMal = false
+                }
+            }
+            if(estaMal) onResult(false)
         }
-        return false
     }
     fun actualizarEmpleado(empleado: Empleado, onResult: (Boolean, String) -> Unit) {
         db.collection(collectionNombre)

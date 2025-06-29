@@ -23,10 +23,6 @@ class EmpleadoAgregarActivity() : AppCompatActivity() {
         var btnAgregar : Button = findViewById(R.id.btnConfirmarAgregar)
         var btnRegresar : Button = findViewById(R.id.btnRegresarEmpleados)
 
-        findViewById<EditText>(R.id.txtNombreEmpleado).setOnClickListener {
-            Toast.makeText(this, findViewById<Spinner>(R.id.cbxRol).selectedItem.toString(), Toast.LENGTH_SHORT).show()
-        }
-
         btnAgregar.setOnClickListener {
             var empleado = Empleado(
                 nombre = findViewById<EditText>(R.id.txtNombreEmpleado).text.toString(),
