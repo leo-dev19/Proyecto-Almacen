@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dorothy.empleado.Empleado
-import com.example.dorothy.empleado.EmpleadoActivity
 import com.example.dorothy.empleado.EmpleadoDBHelper
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +19,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-
-
         empleadoDBHelper = EmpleadoDBHelper()
 
         usuarioNombre = findViewById(R.id.txtNombreUser)
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             )
             empleadoDBHelper.verificarEmpleado(empleado.nombre, empleado.contrasenia){ resultado ->
                 if(resultado){
-                    intent = Intent(this, EmpleadoActivity()::class.java)
+                    intent = Intent(this, GestorAlmacenActivity()::class.java)
                     intent.putExtra("usuario", empleado.nombre)
                     intent.putExtra("rol", empleado.rol)
                     startActivity(intent)
