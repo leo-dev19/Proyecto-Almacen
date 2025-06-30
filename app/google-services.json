@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "111430603377",
+    "project_id": "gestionlotes-996d9",
+    "storage_bucket": "gestionlotes-996d9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111430603377:android:3aaa8fce31197ae2e101d0",
+        "android_client_info": {
+          "package_name": "com.example.dorothy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZbFK-orwYTUZJLmHqXhFjgdHG113lLQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
