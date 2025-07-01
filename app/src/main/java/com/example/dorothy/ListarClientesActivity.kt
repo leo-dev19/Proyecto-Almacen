@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.cliente.ClienteDBHelper
 import com.example.dorothy.cliente.NuevoCliente
 import com.example.myapplication.ClienteAdapter
+import com.google.firebase.FirebaseApp
 
 class ListarClientesActivity : AppCompatActivity() {
 
@@ -20,13 +21,15 @@ class ListarClientesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listar_cliente)
 
+        // ✅ Inicializa Firebase SOLO para esta Activity de prueba
+        FirebaseApp.initializeApp(this)
+
         recyclerClientes = findViewById(R.id.recyclerClientes)
-        dbHelper = ClienteDBHelper(this)
+        dbHelper = ClienteDBHelper() // 👈 Firestore no necesita Context
 
         recyclerClientes.layoutManager = LinearLayoutManager(this)
         cargarClientes()
 
-        // ESTE ES EL CÓDIGO QUE HACE FUNCIONAR EL BOTÓN
         val btnNuevoCliente = findViewById<Button>(R.id.btnNuevoCliente)
         btnNuevoCliente.setOnClickListener {
             val intent = Intent(this, NuevoCliente::class.java)
@@ -40,8 +43,9 @@ class ListarClientesActivity : AppCompatActivity() {
     }
 
     private fun cargarClientes() {
-        val listaClientes = dbHelper.obtenerClientes()
-        adapter = ClienteAdapter(this, listaClientes.toMutableList(), dbHelper)
-        recyclerClientes.adapter = adapter
+        dbHelper.obtenerClientes { listaClientes ->
+            adapter = ClienteAdapter(this, listaClientes.toMutableList(), dbHelper)
+            recyclerClientes.adapter = adapter
+        }
     }
 }
