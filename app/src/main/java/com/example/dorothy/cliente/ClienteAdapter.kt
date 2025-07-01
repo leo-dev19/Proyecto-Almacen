@@ -21,11 +21,11 @@ class ClienteAdapter(
 ) : RecyclerView.Adapter<ClienteAdapter.ClienteViewHolder>() {
 
     inner class ClienteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvNombre = itemView.findViewById<TextView>(R.id.tvNombre)
-        val tvCelular = itemView.findViewById<TextView>(R.id.tvCelular)
-        val tvEmail = itemView.findViewById<TextView>(R.id.tvEmail)
-        val btnEditar = itemView.findViewById<Button>(R.id.btnEditar)
-        val btnEliminar = itemView.findViewById<Button>(R.id.btnEliminar)
+        val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
+        val tvCelular: TextView = itemView.findViewById(R.id.tvCelular)
+        val tvEmail: TextView = itemView.findViewById(R.id.tvEmail)
+        val btnEditar: Button = itemView.findViewById(R.id.btnEditar)
+        val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClienteViewHolder {
@@ -48,11 +48,16 @@ class ClienteAdapter(
                 .setTitle("Confirmar eliminación")
                 .setMessage("¿Deseas eliminar a ${cliente.nombre}?")
                 .setPositiveButton("Sí") { _, _ ->
-                    dbHelper.eliminarCliente(cliente.codCliente)
-                    listaClientes.removeAt(position)
-                    notifyItemRemoved(position)
-                    notifyItemRangeChanged(position, listaClientes.size)
-                    Toast.makeText(context, "Cliente eliminado", Toast.LENGTH_SHORT).show()
+                    dbHelper.eliminarCliente(cliente.codCliente) { success ->
+                        if (success) {
+                            listaClientes.removeAt(position)
+                            notifyItemRemoved(position)
+                            notifyItemRangeChanged(position, listaClientes.size)
+                            Toast.makeText(context, "Cliente eliminado", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Error al eliminar", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
                 .setNegativeButton("No", null)
                 .show()
@@ -103,12 +108,16 @@ class ClienteAdapter(
                         telefono = nuevoCelular,
                         email = nuevoEmail
                     )
-                    dbHelper.actualizarCliente(clienteActualizado)
 
-                    listaClientes[position] = clienteActualizado
-                    notifyItemChanged(position)
-
-                    Toast.makeText(context, "Cliente actualizado", Toast.LENGTH_SHORT).show()
+                    dbHelper.actualizarCliente(clienteActualizado) { success ->
+                        if (success) {
+                            listaClientes[position] = clienteActualizado
+                            notifyItemChanged(position)
+                            Toast.makeText(context, "Cliente actualizado", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } else {
                     Toast.makeText(context, "Complete todos los campos", Toast.LENGTH_SHORT).show()
                 }
@@ -122,3 +131,4 @@ class ClienteAdapter(
         notifyDataSetChanged()
     }
 }
+

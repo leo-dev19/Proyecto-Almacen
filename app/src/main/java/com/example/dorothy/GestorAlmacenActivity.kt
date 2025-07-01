@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.dorothy.almacen.AlmacenesActivity
 import com.example.dorothy.empleado.EmpleadoActivity
 import com.example.dorothy.lotes.GestionLotesActivity
+import com.example.dorothy.producto.ProductosActivity
 
 class GestorAlmacenActivity : AppCompatActivity() {
 
@@ -33,8 +34,8 @@ class GestorAlmacenActivity : AppCompatActivity() {
         }
 
         cardProductos.setOnClickListener {
-            // Intent para GestionProductosActivity
-        }
+            intent = Intent(this, ProductosActivity::class.java)
+            startActivity(intent)        }
 
         cardAlmacenes.setOnClickListener {
             intent = Intent(this, AlmacenesActivity::class.java)

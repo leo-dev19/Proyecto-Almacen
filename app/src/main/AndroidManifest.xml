@@ -38,15 +38,28 @@
             android:name=".cliente.NuevoCliente"
             android:exported="false"
             tools:ignore="Instantiatable" />
-        <activity
-            android:name=".almacen.AlmacenesActivity"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
+
 
         <activity
             android:name=".producto.ProductosActivity"
             android:exported="false"
             tools:ignore="Instantiatable" />
+
+        <activity
+            android:name=".producto.ListarProductosActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+
+        <activity
+            android:name=".almacen.AlmacenesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".lotes.GestionLotesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+
+
 
 
         <activity

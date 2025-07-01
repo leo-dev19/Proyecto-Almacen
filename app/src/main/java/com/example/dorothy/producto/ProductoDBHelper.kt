@@ -40,6 +40,21 @@ class ProductoDBHelper(context: Context) : SQLiteOpenHelper(
         onCreate(db)
     }
 
+    // Insertar nuevo producto
+    fun insertarProducto(producto: Producto): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COL_NOMBRE, producto.nombre)
+            put(COL_CATEGORIA, producto.categoria)
+            put(COL_PRECIO, producto.precio)
+            put(COL_STOCK, producto.stock)
+        }
+        val resultado = db.insert(TABLE_PRODUCTO, null, values)
+        db.close()
+        return resultado
+    }
+
+
     //Listar Productos
 
     fun obtenerProductos(): List<Producto> {
@@ -146,6 +161,8 @@ class ProductoDBHelper(context: Context) : SQLiteOpenHelper(
         db.close()
         return result > 0
     }
+
+
 
 
 }

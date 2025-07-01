@@ -12,18 +12,17 @@ import com.example.dorothy.databinding.DialogAlmacenBinding
 class AlmacenesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAlmacenesBinding
-    private lateinit var dbHelper: AlmacenDBHelper
     private lateinit var adapter: AlmacenAdapter
     private var listaAlmacenes: MutableList<Almacen> = mutableListOf()
+    private val almacenHelper = AlmacenDBHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlmacenesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dbHelper = AlmacenDBHelper(this)
-        listaAlmacenes = dbHelper.obtenerAlmacenes().toMutableList()
-        adapter = AlmacenAdapter(listaAlmacenes,
+        adapter = AlmacenAdapter(
+            listaAlmacenes,
             onEditClick = { almacen -> mostrarDialogoEditar(almacen) },
             onDeleteClick = { almacen -> eliminarAlmacen(almacen) }
         )
@@ -32,6 +31,13 @@ class AlmacenesActivity : AppCompatActivity() {
         binding.recyclerAlmacenes.adapter = adapter
 
         binding.btnAgregar.setOnClickListener { mostrarDialogoAgregar() }
+
+        // Actualiza la lista en tiempo real
+        almacenHelper.escucharAlmacenes { almacenes ->
+            listaAlmacenes.clear()
+            listaAlmacenes.addAll(almacenes)
+            adapter.updateData(listaAlmacenes)
+        }
     }
 
     private fun mostrarDialogoAgregar() {
@@ -39,30 +45,42 @@ class AlmacenesActivity : AppCompatActivity() {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Agregar Almacén")
             .setView(dialogBinding.root)
-            .setPositiveButton("Guardar", null)
-            .setNegativeButton("Cancelar", null)
+            .setCancelable(false)
             .create()
+        dialog.show()
 
-        dialog.setOnShowListener {
-            val btnGuardar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            btnGuardar.setOnClickListener {
-                val nombre = dialogBinding.etNombre.text.toString()
-                val tamano = dialogBinding.etTamano.text.toString()
-                val capacidad = dialogBinding.etCapacidad.text.toString()
-                val ubicacion = dialogBinding.etUbicacion.text.toString()
-                val tipo = dialogBinding.etTipo.text.toString()
+        dialogBinding.btnGuardar.setOnClickListener {
+            val nombre = dialogBinding.etNombre.text.toString()
+            val tamano = dialogBinding.etTamano.text.toString()
+            val capacidad = dialogBinding.etCapacidad.text.toString()
+            val ubicacion = dialogBinding.etUbicacion.text.toString()
+            val tipo = dialogBinding.etTipo.text.toString()
 
-                if (nombre.isEmpty() || tamano.isEmpty() || capacidad.isEmpty() || ubicacion.isEmpty() || tipo.isEmpty()) {
-                    Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
-                } else {
-                    dbHelper.insertarAlmacen(nombre, tamano, capacidad, ubicacion, tipo)
-                    actualizarLista()
-                    dialog.dismiss()
+            if (nombre.isEmpty() || tamano.isEmpty() || capacidad.isEmpty() || ubicacion.isEmpty() || tipo.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            } else {
+                val almacen = Almacen(
+                    id = "",
+                    nombre = nombre,
+                    tamano = tamano,
+                    capacidadMaxima = capacidad,
+                    ubicacion = ubicacion,
+                    tipo = tipo
+                )
+                almacenHelper.insertarAlmacen(almacen) { exito ->
+                    if (exito) {
+                        dialog.dismiss()
+                        Toast.makeText(this, "Guardado en Firestore", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
 
-        dialog.show()
+        dialogBinding.btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     private fun mostrarDialogoEditar(almacen: Almacen) {
@@ -76,30 +94,41 @@ class AlmacenesActivity : AppCompatActivity() {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Editar Almacén")
             .setView(dialogBinding.root)
-            .setPositiveButton("Actualizar", null)
-            .setNegativeButton("Cancelar", null)
+            .setCancelable(false)
             .create()
+        dialog.show()
 
-        dialog.setOnShowListener {
-            val btnActualizar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            btnActualizar.setOnClickListener {
-                val nombre = dialogBinding.etNombre.text.toString()
-                val tamano = dialogBinding.etTamano.text.toString()
-                val capacidad = dialogBinding.etCapacidad.text.toString()
-                val ubicacion = dialogBinding.etUbicacion.text.toString()
-                val tipo = dialogBinding.etTipo.text.toString()
+        dialogBinding.btnGuardar.setOnClickListener {
+            val nombre = dialogBinding.etNombre.text.toString()
+            val tamano = dialogBinding.etTamano.text.toString()
+            val capacidad = dialogBinding.etCapacidad.text.toString()
+            val ubicacion = dialogBinding.etUbicacion.text.toString()
+            val tipo = dialogBinding.etTipo.text.toString()
 
-                if (nombre.isEmpty() || tamano.isEmpty() || capacidad.isEmpty() || ubicacion.isEmpty() || tipo.isEmpty()) {
-                    Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
-                } else {
-                    dbHelper.actualizarAlmacen(almacen.id, nombre, tamano, capacidad, ubicacion, tipo)
-                    actualizarLista()
-                    dialog.dismiss()
+            if (nombre.isEmpty() || tamano.isEmpty() || capacidad.isEmpty() || ubicacion.isEmpty() || tipo.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            } else {
+                val almacenEditado = almacen.copy(
+                    nombre = nombre,
+                    tamano = tamano,
+                    capacidadMaxima = capacidad,
+                    ubicacion = ubicacion,
+                    tipo = tipo
+                )
+                almacenHelper.actualizarAlmacen(almacenEditado) { exito ->
+                    if (exito) {
+                        dialog.dismiss()
+                        Toast.makeText(this, "Actualizado en Firestore", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
 
-        dialog.show()
+        dialogBinding.btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     private fun eliminarAlmacen(almacen: Almacen) {
@@ -107,16 +136,13 @@ class AlmacenesActivity : AppCompatActivity() {
             .setTitle("Eliminar")
             .setMessage("¿Estás seguro de eliminar este almacén?")
             .setPositiveButton("Sí") { _, _ ->
-                dbHelper.eliminarAlmacen(almacen.id)
-                actualizarLista()
+                almacenHelper.eliminarAlmacen(almacen.id) { exito ->
+                    if (!exito) {
+                        Toast.makeText(this, "Error al eliminar", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             .setNegativeButton("No", null)
             .show()
-    }
-
-    private fun actualizarLista() {
-        listaAlmacenes.clear()
-        listaAlmacenes.addAll(dbHelper.obtenerAlmacenes())
-        adapter.updateData(listaAlmacenes)
     }
 }

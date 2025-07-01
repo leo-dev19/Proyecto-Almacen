@@ -1,73 +1,50 @@
 package com.example.dorothy.cliente
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import com.google.firebase.firestore.FirebaseFirestore
 
-class ClienteDBHelper(context: Context) : SQLiteOpenHelper(context, "clientes.db", null, 1) {
+class ClienteDBHelper {
+    private val db = FirebaseFirestore.getInstance()
+    private val collectionName = "clientes"
 
-    override fun onCreate(db: SQLiteDatabase) {
-        val createTable = """
-            CREATE TABLE cliente (
-                codCliente INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT,
-                telefono TEXT,
-                email TEXT
-            )
-        """.trimIndent()
-        db.execSQL(createTable)
+    fun insertarCliente(cliente: Cliente, onResult: (Boolean) -> Unit) {
+        val newDoc = db.collection(collectionName).document()
+        cliente.codCliente = newDoc.id
+        newDoc.set(cliente)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS cliente")
-        onCreate(db)
+    fun obtenerClientes(onResult: (List<Cliente>) -> Unit) {
+        db.collection(collectionName)
+            .get()
+            .addOnSuccessListener { result ->
+                val lista = mutableListOf<Cliente>()
+                for (document in result) {
+                    val cliente = document.toObject(Cliente::class.java)
+                    lista.add(cliente)
+                }
+                onResult(lista)
+            }
+            .addOnFailureListener {
+                onResult(emptyList())
+            }
     }
 
-    fun insertarCliente(cliente: Cliente): Long {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", cliente.nombre)
-            put("telefono", cliente.telefono)
-            put("email", cliente.email)
-        }
-        return db.insert("cliente", null, values)
+    fun actualizarCliente(cliente: Cliente, onResult: (Boolean) -> Unit) {
+        cliente.codCliente?.let { id ->
+            db.collection(collectionName).document(id)
+                .set(cliente)
+                .addOnSuccessListener { onResult(true) }
+                .addOnFailureListener { onResult(false) }
+        } ?: onResult(false)
     }
 
-    fun obtenerClientes(): List<Cliente> {
-        val lista = mutableListOf<Cliente>()
-        val db = readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM cliente", null)
-
-        if (cursor.moveToFirst()) {
-            do {
-                val cliente = Cliente(
-                    codCliente = cursor.getInt(cursor.getColumnIndexOrThrow("codCliente")),
-                    nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre")),
-                    telefono = cursor.getString(cursor.getColumnIndexOrThrow("telefono")),
-                    email = cursor.getString(cursor.getColumnIndexOrThrow("email"))
-                )
-                lista.add(cliente)
-            } while (cursor.moveToNext())
-        }
-
-        cursor.close()
-        return lista
-    }
-
-
-    fun actualizarCliente(cliente: Cliente): Int {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", cliente.nombre)
-            put("telefono", cliente.telefono)
-            put("email", cliente.email)
-        }
-        return db.update("cliente", values, "codCliente=?", arrayOf(cliente.codCliente.toString()))
-    }
-
-    fun eliminarCliente(codCliente: Int): Int {
-        val db = writableDatabase
-        return db.delete("cliente", "codCliente=?", arrayOf(codCliente.toString()))
+    fun eliminarCliente(codCliente: String?, onResult: (Boolean) -> Unit) {
+        codCliente?.let { id ->
+            db.collection(collectionName).document(id)
+                .delete()
+                .addOnSuccessListener { onResult(true) }
+                .addOnFailureListener { onResult(false) }
+        } ?: onResult(false)
     }
 }

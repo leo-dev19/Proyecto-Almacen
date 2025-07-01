@@ -1,79 +1,50 @@
 package com.example.dorothy.almacen
 
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import android.content.ContentValues
-import android.database.Cursor
+import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 
-class AlmacenDBHelper(context: Context) : SQLiteOpenHelper(context, "almacenes.db", null, 1) {
+class AlmacenDBHelper {
+    private val db = FirebaseFirestore.getInstance()
+    private val collection = db.collection("almacenes")
 
-    override fun onCreate(db: SQLiteDatabase) {
-        val createTable = """
-            CREATE TABLE almacenes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT NOT NULL,
-                tamano TEXT,
-                capacidadMaxima TEXT,
-                ubicacion TEXT,
-                tipo TEXT
-            )
-        """
-        db.execSQL(createTable)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS almacenes")
-        onCreate(db)
-    }
-
-    fun insertarAlmacen(nombre: String, tamano: String, capacidadMaxima: String, ubicacion: String, tipo: String): Long {
-        val db = this.writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", nombre)
-            put("tamano", tamano)
-            put("capacidadMaxima", capacidadMaxima)
-            put("ubicacion", ubicacion)
-            put("tipo", tipo)
+    fun insertarAlmacen(almacen: Almacen, onComplete: (Boolean) -> Unit) {
+        val docRef = collection.document()
+        val almacenConId = almacen.copy(id = docRef.id)
+        docRef.set(almacenConId).addOnCompleteListener { task ->
+            onComplete(task.isSuccessful)
         }
-        return db.insert("almacenes", null, values)
     }
 
-    fun obtenerAlmacenes(): List<Almacen> {
-        val almacenes = mutableListOf<Almacen>()
-        val db = this.readableDatabase
-        val cursor: Cursor = db.rawQuery("SELECT * FROM almacenes", null)
-        if (cursor.moveToFirst()) {
-            do {
-                val almacen = Almacen(
-                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
-                    nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre")),
-                    tamano = cursor.getString(cursor.getColumnIndexOrThrow("tamano")),
-                    capacidadMaxima = cursor.getString(cursor.getColumnIndexOrThrow("capacidadMaxima")),
-                    ubicacion = cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")),
-                    tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
-                )
-                almacenes.add(almacen)
-            } while (cursor.moveToNext())
+    fun actualizarAlmacen(almacen: Almacen, onComplete: (Boolean) -> Unit) {
+        if (almacen.id.isNotEmpty()) {
+            collection.document(almacen.id).set(almacen).addOnCompleteListener { task ->
+                onComplete(task.isSuccessful)
+            }
+        } else {
+            onComplete(false)
         }
-        cursor.close()
-        return almacenes
     }
 
-    fun actualizarAlmacen(id: Int, nombre: String, tamano: String, capacidadMaxima: String, ubicacion: String, tipo: String): Int {
-        val db = this.writableDatabase
-        val values = ContentValues().apply {
-            put("nombre", nombre)
-            put("tamano", tamano)
-            put("capacidadMaxima", capacidadMaxima)
-            put("ubicacion", ubicacion)
-            put("tipo", tipo)
+    fun eliminarAlmacen(id: String, onComplete: (Boolean) -> Unit) {
+        collection.document(id).delete().addOnCompleteListener { task ->
+            onComplete(task.isSuccessful)
         }
-        return db.update("almacenes", values, "id = ?", arrayOf(id.toString()))
     }
 
-    fun eliminarAlmacen(id: Int): Int {
-        val db = this.writableDatabase
-        return db.delete("almacenes", "id = ?", arrayOf(id.toString()))
+    fun escucharAlmacenes(onDataChange: (List<Almacen>) -> Unit) {
+        collection.addSnapshotListener { value, error ->
+            if (error != null) {
+                onDataChange(emptyList())
+                return@addSnapshotListener
+            }
+            val almacenes = mutableListOf<Almacen>()
+            value?.documents?.forEach { doc ->
+                val almacen = doc.toObject(Almacen::class.java)
+                if (almacen != null) {
+                    almacenes.add(almacen)
+                }
+            }
+            onDataChange(almacenes)
+        }
     }
 }
