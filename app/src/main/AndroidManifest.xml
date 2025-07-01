@@ -45,11 +45,19 @@
             android:name=".producto.ListarProductosActivity"
             android:exported="false"
             tools:ignore="Instantiatable" />
+        <activity
+            android:name=".ListarClientesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".lotes.GestionLotesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
 
 
         <activity
 
-            android:name=".ListarClientesActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
