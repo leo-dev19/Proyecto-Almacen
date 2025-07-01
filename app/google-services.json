@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "343909470414",
-    "project_id": "dorothyalmacenv1dam",
-    "storage_bucket": "dorothyalmacenv1dam.firebasestorage.app"
+    "project_number": "966182964295",
+    "project_id": "almacenes-63c6a",
+    "storage_bucket": "almacenes-63c6a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:343909470414:android:538526b6bcfe43b961809f",
+        "mobilesdk_app_id": "1:966182964295:android:a8a13ff8d14e8b9974f562",
         "android_client_info": {
           "package_name": "com.example.dorothy"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAphUkBsScdw1bx1ry9DulEnA669hEoFxY"
+          "current_key": "AIzaSyBvdoTEGCtZWcl2ZMv8z2_Ds9xCsBaq2s0"
         }
       ],
       "services": {

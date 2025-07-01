@@ -34,10 +34,7 @@
             android:name=".cliente.NuevoCliente"
             android:exported="false"
             tools:ignore="Instantiatable" />
-        <activity
-            android:name=".almacen.AlmacenesActivity"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
+
 
         <activity
             android:name=".producto.ProductosActivity"
@@ -52,7 +49,7 @@
 
         <activity
 
-            android:name=".MainActivity"
+            android:name=".almacen.AlmacenesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
