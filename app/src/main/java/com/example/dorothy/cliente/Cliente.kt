@@ -1,8 +1,8 @@
 package com.example.dorothy.cliente
 
 data class Cliente(
-    val codCliente: Int = 0,
-    val nombre: String,
-    val telefono: String,
-    val email: String
+    var codCliente: String? = null,  // Ahora es String y opcional
+    var nombre: String? = null,
+    var telefono: String? = null,
+    var email: String? = null
 )

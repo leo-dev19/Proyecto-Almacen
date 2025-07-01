@@ -32,7 +32,7 @@ class NuevoCliente : AppCompatActivity() {
         btnGrabar = findViewById(R.id.btnGrabar)
         progressBar = findViewById(R.id.progressBar)
 
-        dbHelper = ClienteDBHelper(this)
+        dbHelper = ClienteDBHelper()  // Firestore no necesita Context
 
         btnGrabar.setOnClickListener {
             val nombre = etNombre.text.toString().trim()
@@ -59,14 +59,21 @@ class NuevoCliente : AppCompatActivity() {
                 .setPositiveButton("Sí") { _, _ ->
                     progressBar.visibility = View.VISIBLE
 
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val cliente = Cliente(nombre = nombre, telefono = celular, email = email)
-                        dbHelper.insertarCliente(cliente)
-
+                    // Puedes quitar el delay, Firestore ya es asíncrono
+                    val cliente = Cliente(
+                        nombre = nombre,
+                        telefono = celular,
+                        email = email
+                    )
+                    dbHelper.insertarCliente(cliente) { success ->
                         progressBar.visibility = View.GONE
-                        Toast.makeText(this, "Cliente registrado", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }, 2000)
+                        if (success) {
+                            Toast.makeText(this, "Cliente registrado", Toast.LENGTH_SHORT).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this, "Error al registrar cliente", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
                 .setNegativeButton("No", null)
                 .show()
