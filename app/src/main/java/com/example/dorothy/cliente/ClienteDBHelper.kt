@@ -1,9 +1,6 @@
 package com.example.dorothy.cliente
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ClienteDBHelper {
