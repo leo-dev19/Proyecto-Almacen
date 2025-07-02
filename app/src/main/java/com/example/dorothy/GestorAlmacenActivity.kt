@@ -25,7 +25,8 @@ class GestorAlmacenActivity : AppCompatActivity() {
         intent.putExtra("rol", intent.getStringExtra("rol"))
 
         cardLotes.setOnClickListener {
-            startActivity(Intent(this, GestionLotesActivity::class.java))
+            intent = Intent(this, GestionLotesActivity::class.java)
+            startActivity(intent)
         }
 
         cardEmpleados.setOnClickListener {

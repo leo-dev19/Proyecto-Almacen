@@ -30,10 +30,8 @@ class LoteAdapter(
             view = convertView
             holder = view.tag as ViewHolder
         }
-
         val lote = listaLotes[position]
 
-        // Asignar datos a las vistas
         holder.apply {
             tvIdLote.text = "ID: ${lote.id}"
             tvFechaRegistro.text = "Registrado: ${lote.fechaRegistro}"
@@ -49,7 +47,12 @@ class LoteAdapter(
         return view
     }
 
-    // ViewHolder para optimizar rendimiento
+    fun actualizarLista(nuevaLista: List<Lote>) {
+        listaLotes.clear()
+        listaLotes.addAll(nuevaLista)
+        notifyDataSetChanged()
+    }
+
     private class ViewHolder(view: View) {
         val tvIdLote: TextView = view.findViewById(R.id.tvIdLote)
         val tvFechaRegistro: TextView = view.findViewById(R.id.tvFechaRegistro)

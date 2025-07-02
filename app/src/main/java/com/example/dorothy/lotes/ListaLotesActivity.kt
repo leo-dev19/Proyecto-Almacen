@@ -8,27 +8,23 @@ import com.example.dorothy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.text.Editable
 import android.text.TextWatcher
+import java.util.Calendar
+import android.app.DatePickerDialog
 
 class ListaLotesActivity : AppCompatActivity() {
 
-    // Vistas
     private lateinit var listView: ListView
     private lateinit var etBuscar: EditText
     private lateinit var btnRegresar: Button
 
-    // Firebase
     private lateinit var db: FirebaseFirestore
-
-    // Datos
     private lateinit var loteList: ArrayList<Lote>
     private lateinit var adapter: LoteAdapter
-    private val listaProductos = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lotes_registrados)
 
-        // Referencias
         listView = findViewById(R.id.listViewLotesRegistrados)
         etBuscar = findViewById(R.id.etBuscar)
         btnRegresar = findViewById(R.id.btnRegresar)
@@ -42,32 +38,33 @@ class ListaLotesActivity : AppCompatActivity() {
             onEditarClick = { dialogoEditar(it) },
             onEliminarClick = { eliminarLote(it) }
         )
+
         listView.adapter = adapter
+
         obtenerLotes()
 
-        // Búsqueda
         etBuscar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val texto = s.toString().lowercase()
-                val filtrados = loteList.filter { lote ->
-                    lote.id.lowercase().contains(texto) ||
-                            lote.producto.lowercase().contains(texto) ||
-                            lote.tipo.lowercase().contains(texto)
-                }
-                adapter = LoteAdapter(
-                    this@ListaLotesActivity,
-                    ArrayList(filtrados),
-                    onEditarClick = { dialogoEditar(it) },
-                    onEliminarClick = { eliminarLote(it) }
-                )
-                listView.adapter = adapter
+                filtrarLotes(s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        btnRegresar.setOnClickListener { finish() }
     }
 
-    // Obtener lotes desde Firebase
+    private fun filtrarLotes(texto: String) {
+        val textoFiltrado = texto.lowercase()
+        val listaFiltrada = loteList.filter { lote ->
+            lote.id.lowercase().contains(textoFiltrado) ||
+                    lote.producto.lowercase().contains(textoFiltrado) ||
+                    lote.tipo.lowercase().contains(textoFiltrado) ||
+                    lote.fechaVencimiento.lowercase().contains(textoFiltrado)
+        }
+        adapter.actualizarLista(listaFiltrada)
+    }
+
     private fun obtenerLotes() {
         db.collection("Lotes")
             .get()
@@ -75,43 +72,23 @@ class ListaLotesActivity : AppCompatActivity() {
                 loteList.clear()
                 for (document in result) {
                     val lote = Lote(
-                        id = document.getString("idLote") ?: "",
+                        id = document.id,
                         fechaRegistro = document.getString("fechaRegistro") ?: "",
                         producto = document.getString("producto") ?: "",
                         tipo = document.getString("tipo") ?: "",
                         fragil = document.getBoolean("fragil") ?: false,
-                        stock = document.getString("stock") ?: "0",
+                        stock = document.getLong("stock") ?: 0,
                         fechaVencimiento = document.getString("fechaVencimiento") ?: ""
                     )
                     loteList.add(lote)
                 }
-                adapter.notifyDataSetChanged()
+                adapter.actualizarLista(loteList)
             }
             .addOnFailureListener {
                 mostrarToast("Error al cargar datos")
             }
     }
 
-    // Cargar productos desde Firebase
-    private fun cargarProductosParaEditar(onComplete: (ArrayList<String>) -> Unit) {
-        db.collection("Productos")
-            .get()
-            .addOnSuccessListener { result ->
-                val productos = ArrayList<String>()
-                productos.add("Seleccione un producto")
-                for (document in result) {
-                    val nombre = document.getString("nombre") ?: "Sin nombre"
-                    productos.add(nombre)
-                }
-                onComplete(productos)
-            }
-            .addOnFailureListener {
-                mostrarToast("Error al cargar productos")
-                onComplete(arrayListOf())
-            }
-    }
-
-    // Editar lote
     private fun dialogoEditar(lote: Lote) {
         val dialogView = layoutInflater.inflate(R.layout.editar_lote, null)
 
@@ -121,12 +98,35 @@ class ListaLotesActivity : AppCompatActivity() {
         val cbFragil = dialogView.findViewById<CheckBox>(R.id.cbFragilEditar)
         val etFechaVenc = dialogView.findViewById<EditText>(R.id.etFechaVencimientoEditar)
 
-        // Cargar datos actuales
-        etStock.setText(lote.stock)
+        etStock.setText(lote.stock.toString())
         cbFragil.isChecked = lote.fragil
         etFechaVenc.setText(lote.fechaVencimiento)
 
-        // Spinner tipo
+        etFechaVenc.setOnClickListener {
+            val calendar = Calendar.getInstance()
+
+            // Si ya hay una fecha escrita, la usamos como valor inicial
+            val dateParts = etFechaVenc.text.toString().split("/")
+            if (dateParts.size == 3) {
+                calendar.set(Calendar.DAY_OF_MONTH, dateParts[0].toInt())
+                calendar.set(Calendar.MONTH, dateParts[1].toInt() - 1)
+                calendar.set(Calendar.YEAR, dateParts[2].toInt())
+            }
+
+            val datePicker = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+                val fechaSeleccionada = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+                etFechaVenc.setText(fechaSeleccionada)
+            },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            datePicker.datePicker.minDate = System.currentTimeMillis()
+
+            datePicker.show()
+        }
+
         val adapterTipo = ArrayAdapter.createFromResource(
             this,
             R.array.tipo_lote,
@@ -134,22 +134,17 @@ class ListaLotesActivity : AppCompatActivity() {
         )
         adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spTipo.adapter = adapterTipo
-        val tipoIndex = adapterTipo.getPosition(lote.tipo)
-        spTipo.setSelection(if (tipoIndex != -1) tipoIndex else 0)
+        spTipo.setSelection(adapterTipo.getPosition(lote.tipo))
 
-        // Spinner producto desde Firebase
-        cargarProductosParaEditar { productos ->
-            val adapterProducto = ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                productos
-            )
-            adapterProducto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spProducto.adapter = adapterProducto
-
-            val productoIndex = productos.indexOf(lote.producto)
-            spProducto.setSelection(if (productoIndex != -1) productoIndex else 0)
-        }
+        val productos = loteList.map { it.producto }.distinct()
+        val adapterProducto = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            productos
+        )
+        adapterProducto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spProducto.adapter = adapterProducto
+        spProducto.setSelection(productos.indexOf(lote.producto))
 
         val dialog = android.app.AlertDialog.Builder(this)
             .setView(dialogView)
@@ -157,14 +152,14 @@ class ListaLotesActivity : AppCompatActivity() {
             .create()
 
         dialogView.findViewById<Button>(R.id.btnActualizar).setOnClickListener {
-            val nuevoStock = etStock.text.toString().trim()
+            val nuevoStock = etStock.text.toString().trim().toLongOrNull()
             val nuevoTipo = spTipo.selectedItem.toString()
             val nuevoProducto = spProducto.selectedItem.toString()
             val esFragil = cbFragil.isChecked
             val nuevaFechaVenc = etFechaVenc.text.toString().trim()
 
-            if (nuevoStock.isEmpty() || nuevaFechaVenc.isEmpty() || nuevoProducto == "Seleccione un producto") {
-                mostrarToast("Complete todos los campos")
+            if (nuevoStock == null || nuevaFechaVenc.isEmpty() || nuevoProducto.isEmpty()) {
+                mostrarToast("Complete todos los campos correctamente")
                 return@setOnClickListener
             }
 
@@ -194,7 +189,6 @@ class ListaLotesActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // Eliminar lote
     private fun eliminarLote(lote: Lote) {
         db.collection("Lotes").document(lote.id)
             .delete()
@@ -207,7 +201,6 @@ class ListaLotesActivity : AppCompatActivity() {
             }
     }
 
-    // Toast personalizado
     private fun mostrarToast(mensaje: String) {
         val layout = layoutInflater.inflate(
             R.layout.mensaje_lotes,

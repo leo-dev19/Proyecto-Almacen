@@ -49,12 +49,17 @@
             android:name=".almacen.AlmacenesActivity"
             android:exported="false"
             tools:ignore="Instantiatable" />
+
+        <!-- Lotes -->
         <activity
             android:name=".lotes.GestionLotesActivity"
             android:exported="false"
             tools:ignore="Instantiatable" />
 
-
+        <activity
+            android:name=".lotes.ListaLotesActivity"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
 
 
         <activity

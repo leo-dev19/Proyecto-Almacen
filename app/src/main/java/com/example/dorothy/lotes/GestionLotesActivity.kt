@@ -9,6 +9,7 @@ import com.example.dorothy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import android.app.DatePickerDialog
 
 class GestionLotesActivity : AppCompatActivity() {
 
@@ -50,10 +51,29 @@ class GestionLotesActivity : AppCompatActivity() {
         cargarProductos() // Desde Firebase
         cargarTipoLote()  // Desde strings.xml
 
+        // Calendario para fecha de vencicmiento
+        etFechaVencimiento.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePicker = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+                val fechaSeleccionada = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
+                etFechaVencimiento.setText(fechaSeleccionada)
+            }, year, month, day)
+
+            // Bloquear fechas pasadas
+            datePicker.datePicker.minDate = System.currentTimeMillis()
+
+            datePicker.show()
+        }
+
         // Botones
         btnGuardar.setOnClickListener { guardarLote() }
         btnCancelar.setOnClickListener { limpiarCampos() }
         btnVerLotes.setOnClickListener {
+            Toast.makeText(this, "Abriendo Lotes Registrados", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, ListaLotesActivity::class.java))
         }
     }
@@ -107,13 +127,13 @@ class GestionLotesActivity : AppCompatActivity() {
 
         val nombreProducto = listaProductos.getOrNull(posicionProducto) ?: ""
         val tipo = spTipo.selectedItem.toString()
-        val stock = etStock.text.toString().trim()
+        val stock = etStock.text.toString().trim().toLongOrNull()
         val fechaVenc = etFechaVencimiento.text.toString().trim()
         val fragil = cbFragil.isChecked
 
         // Validación
-        if (posicionProducto == 0 || posicionTipo == 0 || stock.isEmpty() || fechaVenc.isEmpty()) {
-            mostrarToast("Complete todos los campos")
+        if (posicionProducto == 0 || posicionTipo == 0 || stock == null || fechaVenc.isEmpty()) {
+            mostrarToast("Complete todos los campos correctamente")
             return
         }
 
@@ -121,12 +141,11 @@ class GestionLotesActivity : AppCompatActivity() {
         val fechaRegistro = obtenerFechaActual()
 
         val lote = hashMapOf(
-            "idLote" to idLote,
             "producto" to nombreProducto,
             "fechaRegistro" to fechaRegistro,
             "tipo" to tipo,
             "fragil" to fragil,
-            "stock" to stock,
+            "stock" to stock.toLong(),
             "fechaVencimiento" to fechaVenc
         )
 

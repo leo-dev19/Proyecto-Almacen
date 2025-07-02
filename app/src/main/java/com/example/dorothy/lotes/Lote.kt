@@ -6,6 +6,6 @@ data class Lote(
     val producto: String = "",
     val tipo: String = "",
     val fragil: Boolean = false,
-    val stock: String = "0",
+    val stock: Long = 0,
     val fechaVencimiento: String = ""
 )

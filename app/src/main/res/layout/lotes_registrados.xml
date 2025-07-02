@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#8E24AA">
 
     <!-- Encabezado -->
     <LinearLayout
-        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -27,8 +27,8 @@
     <!-- Contenedor blanco -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/headerLayout"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@drawable/header_lotes"
         android:orientation="vertical"
         android:padding="16dp">
@@ -44,13 +44,13 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="16dp">
 
-
-        <ImageView
+            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@android:drawable/ic_menu_search"
-                app:tint="#8E24AA"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                app:tint="#8E24AA" />
+
             <EditText
                 android:id="@+id/etBuscar"
                 android:layout_width="0dp"
@@ -61,7 +61,6 @@
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:padding="10dp"
-                android:paddingVertical="12dp"
                 android:minHeight="48dp"
                 android:inputType="text" />
         </LinearLayout>
@@ -71,7 +70,7 @@
             android:id="@+id/listViewLotesRegistrados"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"/>
 
         <!-- Botón Regresar -->
         <Button
@@ -81,6 +80,6 @@
             android:text="Regresar"
             android:backgroundTint="#8E24AA"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"/>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
