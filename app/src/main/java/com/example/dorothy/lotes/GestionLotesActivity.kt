@@ -98,7 +98,7 @@ class GestionLotesActivity : AppCompatActivity() {
                 listaProductos.clear()
                 listaIdsProductos.clear()
 
-                listaProductos.add("Seleccione un producto") // Primera opción vacía
+                listaProductos.add("Seleccione un producto")
 
                 for (document in result) {
                     val nombre = document.getString("nombre") ?: "Sin nombre" //cambiar campo
