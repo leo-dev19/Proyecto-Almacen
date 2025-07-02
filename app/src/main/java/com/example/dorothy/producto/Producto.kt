@@ -1,9 +1,9 @@
 package com.example.dorothy.producto
 
 data class Producto(
-    val id: Int = 0,
-    val nombre: String,
-    val categoria: String,
-    val precio: Double,
-    val stock: Int
+    var id: String? = null,
+    var nombre: String = "",
+    var categoria: String = "",
+    var precio: String = "",
+    var stock: String = ""
 )
