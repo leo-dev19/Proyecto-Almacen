@@ -2,8 +2,6 @@ package com.example.dorothy.producto
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -32,13 +30,14 @@ class ProductosActivity : AppCompatActivity() {
         etStock = findViewById(R.id.etStock)
         btnGuardar = findViewById(R.id.btnGuardar)
         progressBar = findViewById(R.id.progressBar)
+        btnIrListado = findViewById(R.id.btnIrListado)
 
-        dbHelper = ProductoDBHelper(this)
+        dbHelper = ProductoDBHelper()
 
         btnGuardar.setOnClickListener {
             validarYGuardar()
         }
-        btnIrListado = findViewById(R.id.btnIrListado)
+
         btnIrListado.setOnClickListener {
             val intent = Intent(this, ListarProductosActivity::class.java)
             startActivity(intent)
@@ -76,20 +75,27 @@ class ProductosActivity : AppCompatActivity() {
             return
         }
 
+        val producto = Producto(
+            nombre = nombre,
+            categoria = categoria,
+            precio = precio.toString(),
+            stock = stock.toString()
+        )
+
         AlertDialog.Builder(this)
             .setTitle("Confirmación")
             .setMessage("¿Deseas registrar este producto?")
             .setPositiveButton("Sí") { _, _ ->
                 progressBar.visibility = View.VISIBLE
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    val producto = Producto(id = 0, nombre = nombre, categoria = categoria, precio = precio, stock = stock)
-                    dbHelper.insertarProducto(producto)
-
+                dbHelper.insertarProducto(producto) { success ->
                     progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Producto registrado correctamente", Toast.LENGTH_SHORT).show()
-                    limpiarCampos()
-                }, 1000)
+                    if (success) {
+                        Toast.makeText(this, "Producto registrado correctamente", Toast.LENGTH_SHORT).show()
+                        limpiarCampos()
+                    } else {
+                        Toast.makeText(this, "Error al registrar el producto", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             .setNegativeButton("No", null)
             .show()

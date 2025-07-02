@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dorothy.R
+import com.example.myapplication.ProductoAdapter
+
 
 class ListarProductosActivity : AppCompatActivity() {
 
@@ -22,29 +24,36 @@ class ListarProductosActivity : AppCompatActivity() {
         setContentView(R.layout.activity_productos)
 
         recyclerProductos = findViewById(R.id.rvProductos)
-        dbHelper = ProductoDBHelper(this)
-
         recyclerProductos.layoutManager = LinearLayoutManager(this)
-        cargarProductos()
 
         etBuscar = findViewById(R.id.etBuscar)
         btnBuscar = findViewById(R.id.btnBuscar)
 
+        dbHelper = ProductoDBHelper()
+
+        adapter = ProductoAdapter(this, mutableListOf(), dbHelper)
+        recyclerProductos.adapter = adapter
+
+        cargarProductos()
+
         btnBuscar.setOnClickListener {
             val nombreBuscado = etBuscar.text.toString().trim()
             if (nombreBuscado.isNotEmpty()) {
-                val resultados = dbHelper.buscarPorNombre(nombreBuscado)
-                adapter.actualizarLista(resultados.toMutableList())
+                dbHelper.obtenerProductos { lista ->
+                    val filtrados = lista.filter {
+                        it.nombre?.contains(nombreBuscado, ignoreCase = true) ?: false
+                    }
+                    adapter.actualizarLista(filtrados.toMutableList())
+                }
             } else {
-                cargarProductos() // Si está vacío, carga todo
+                cargarProductos()
             }
         }
 
 
         val btnNuevoProducto = findViewById<Button>(R.id.btnNuevoProducto)
         btnNuevoProducto.setOnClickListener {
-            val intent = Intent(this, ProductosActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ProductosActivity::class.java))
         }
     }
 
@@ -54,8 +63,8 @@ class ListarProductosActivity : AppCompatActivity() {
     }
 
     private fun cargarProductos() {
-        val listaProductos = dbHelper.obtenerProductos()
-        adapter = ProductoAdapter(this, listaProductos.toMutableList(), dbHelper)
-        recyclerProductos.adapter = adapter
+        dbHelper.obtenerProductos { lista ->
+            adapter.actualizarLista(lista.toMutableList())
+        }
     }
 }
