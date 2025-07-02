@@ -92,7 +92,7 @@ class GestionLotesActivity : AppCompatActivity() {
 
     // Spinner productos desde Firebase
     private fun cargarProductos() {
-        db.collection("Productos") //cambiar coleccion
+        db.collection("productos")
             .get()
             .addOnSuccessListener { result ->
                 listaProductos.clear()
@@ -101,7 +101,7 @@ class GestionLotesActivity : AppCompatActivity() {
                 listaProductos.add("Seleccione un producto")
 
                 for (document in result) {
-                    val nombre = document.getString("nombre") ?: "Sin nombre" //cambiar campo
+                    val nombre = document.getString("nombre") ?: "Sin nombre"
                     val id = document.id
 
                     listaProductos.add(nombre)
