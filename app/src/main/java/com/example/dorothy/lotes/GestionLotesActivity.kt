@@ -28,7 +28,6 @@ class GestionLotesActivity : AppCompatActivity() {
 
     // Spinner Producto (desde Firebase)
     private val listaProductos = ArrayList<String>()
-    private val listaIdsProductos = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +64,6 @@ class GestionLotesActivity : AppCompatActivity() {
 
             // Bloquear fechas pasadas
             datePicker.datePicker.minDate = System.currentTimeMillis()
-
             datePicker.show()
         }
 
@@ -96,8 +94,6 @@ class GestionLotesActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 listaProductos.clear()
-                listaIdsProductos.clear()
-
                 listaProductos.add("Seleccione un producto")
 
                 for (document in result) {
@@ -105,7 +101,6 @@ class GestionLotesActivity : AppCompatActivity() {
                     val id = document.id
 
                     listaProductos.add(nombre)
-                    listaIdsProductos.add(id)
                 }
                 val adapter = ArrayAdapter(
                     this,
@@ -162,7 +157,7 @@ class GestionLotesActivity : AppCompatActivity() {
 
     // ID automático
     private fun generarIdLote(): String {
-        return "L" + System.currentTimeMillis().toString()
+        return "LT" + System.currentTimeMillis().toString()
     }
 
     // Fecha actual

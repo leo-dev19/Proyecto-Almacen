@@ -9,10 +9,11 @@ import com.example.dorothy.R
 
 class LoteAdapter(
     private val context: Context,
-    private val listaLotes: ArrayList<Lote>,
+    listaLotes: List<Lote>,
     private val onEditarClick: (Lote) -> Unit,
     private val onEliminarClick: (Lote) -> Unit
 ) : BaseAdapter() {
+    private val listaLotes: MutableList<Lote> = listaLotes.toMutableList()
 
     override fun getCount(): Int = listaLotes.size
     override fun getItem(position: Int): Any = listaLotes[position]
@@ -37,7 +38,7 @@ class LoteAdapter(
             tvFechaRegistro.text = "Registrado: ${lote.fechaRegistro}"
             tvProducto.text = "Producto: ${lote.producto}"
             tvTipo.text = "Tipo: ${lote.tipo}"
-            tvFragil.text = "Frágil: ${if (lote.fragil) "Sí" else "No"}"
+            tvFragil.text = "Frágil: ${if (lote.fragil) "Si" else "No"}"
             tvStock.text = "Stock: ${lote.stock}"
             tvFechaVencimiento.text = "Vence: ${lote.fechaVencimiento}"
 

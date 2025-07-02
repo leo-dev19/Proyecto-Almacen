@@ -10,6 +10,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import java.util.Calendar
 import android.app.DatePickerDialog
+import android.util.Log
 
 class ListaLotesActivity : AppCompatActivity() {
 
@@ -34,7 +35,7 @@ class ListaLotesActivity : AppCompatActivity() {
 
         adapter = LoteAdapter(
             this,
-            loteList,
+            emptyList(),
             onEditarClick = { dialogoEditar(it) },
             onEliminarClick = { eliminarLote(it) }
         )
@@ -60,10 +61,13 @@ class ListaLotesActivity : AppCompatActivity() {
             lote.id.lowercase().contains(textoFiltrado) ||
                     lote.producto.lowercase().contains(textoFiltrado) ||
                     lote.tipo.lowercase().contains(textoFiltrado) ||
-                    lote.fechaVencimiento.lowercase().contains(textoFiltrado)
+                    lote.fechaVencimiento.lowercase().contains(textoFiltrado) ||
+                    lote.fechaRegistro.lowercase().contains(textoFiltrado) ||
+                    (if (lote.fragil) "Si" else "No").contains(textoFiltrado)
         }
         adapter.actualizarLista(listaFiltrada)
     }
+
 
     private fun obtenerLotes() {
         db.collection("Lotes")
@@ -84,8 +88,9 @@ class ListaLotesActivity : AppCompatActivity() {
                 }
                 adapter.actualizarLista(loteList)
             }
-            .addOnFailureListener {
-                mostrarToast("Error al cargar datos")
+            .addOnFailureListener { exception ->
+                mostrarToast("Error al cargar: ${exception.message}")
+                Log.e("FirebaseError", "Error al obtener lotes", exception)
             }
     }
 
