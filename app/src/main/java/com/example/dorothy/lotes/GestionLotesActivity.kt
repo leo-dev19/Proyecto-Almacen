@@ -1,162 +1,173 @@
 package com.example.dorothy.lotes
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dorothy.R
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
 class GestionLotesActivity : AppCompatActivity() {
 
-    private lateinit var etIdLote: EditText
-    private lateinit var etFechaRegistro: EditText
-    private lateinit var etIdDetalle: EditText
+    // Vistas
+    private lateinit var spProducto: Spinner
+    private lateinit var spTipo: Spinner
     private lateinit var etStock: EditText
     private lateinit var etFechaVencimiento: EditText
-    private lateinit var spTipo: Spinner
     private lateinit var cbFragil: CheckBox
     private lateinit var btnGuardar: Button
     private lateinit var btnCancelar: Button
-    private lateinit var listViewLotes: ListView
+    private lateinit var btnVerLotes: LinearLayout
 
+    // Firebase
     private lateinit var db: FirebaseFirestore
-    private lateinit var loteList: ArrayList<Lote>
-    private lateinit var adapter: LoteAdapter
+
+    // Spinner Producto (desde Firebase)
+    private val listaProductos = ArrayList<String>()
+    private val listaIdsProductos = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gestion_lotes)
 
-        // 🔥 Firebase
+        // Instancia Firebase
         db = FirebaseFirestore.getInstance()
 
-        // 🧠 Referencias
-        etIdLote = findViewById(R.id.etIdLote)
-        etFechaRegistro = findViewById(R.id.etFechaRegistro)
-        etIdDetalle = findViewById(R.id.etIdDetalle)
+        // Vistas
+        spProducto = findViewById(R.id.spProducto)
+        spTipo = findViewById(R.id.spTipo)
         etStock = findViewById(R.id.etStock)
         etFechaVencimiento = findViewById(R.id.etFechaVencimiento)
-        spTipo = findViewById(R.id.spTipo)
         cbFragil = findViewById(R.id.cbFragil)
         btnGuardar = findViewById(R.id.btnGuardar)
         btnCancelar = findViewById(R.id.btnCancelar)
-        listViewLotes = findViewById(R.id.listViewLotes)
+        btnVerLotes = findViewById(R.id.btnVerLotes)
 
-        loteList = ArrayList()
+        // Cargar datos en los spinners
+        cargarProductos() // Desde Firebase
+        cargarTipoLote()  // Desde strings.xml
 
-        adapter = LoteAdapter(this, loteList,
-            onEditarClick = { lote -> cargarDatosLote(lote) },
-            onEliminarClick = { lote -> eliminarLote(lote) }
-        )
-
-        listViewLotes.adapter = adapter
-
-        btnGuardar.setOnClickListener { guardarOActualizarLote() }
+        // Botones
+        btnGuardar.setOnClickListener { guardarLote() }
         btnCancelar.setOnClickListener { limpiarCampos() }
-
-        obtenerLotes()
+        btnVerLotes.setOnClickListener {
+            startActivity(Intent(this, ListaLotesActivity::class.java))
+        }
     }
 
-    // ✅ Crear o Editar
-    private fun guardarOActualizarLote() {
-        val idLote = etIdLote.text.toString().trim()
-        val fecha = etFechaRegistro.text.toString().trim()
-        val tipo = spTipo.selectedItem.toString()
-        val fragil = cbFragil.isChecked
-        val idDetalle = etIdDetalle.text.toString().trim()
-        val stock = etStock.text.toString().trim()
-        val vencimiento = etFechaVencimiento.text.toString().trim()
+    // Spinner tipo lote
+    private fun cargarTipoLote() {
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.tipo_lote,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spTipo.adapter = adapter
+        }
+    }
 
-        if (idLote.isEmpty() || fecha.isEmpty() || stock.isEmpty() || idDetalle.isEmpty() || vencimiento.isEmpty()) {
+    // Spinner productos desde Firebase
+    private fun cargarProductos() {
+        db.collection("Productos") //cambiar coleccion
+            .get()
+            .addOnSuccessListener { result ->
+                listaProductos.clear()
+                listaIdsProductos.clear()
+
+                listaProductos.add("Seleccione un producto") // Primera opción vacía
+
+                for (document in result) {
+                    val nombre = document.getString("nombre") ?: "Sin nombre" //cambiar campo
+                    val id = document.id
+
+                    listaProductos.add(nombre)
+                    listaIdsProductos.add(id)
+                }
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    listaProductos
+                )
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spProducto.adapter = adapter
+            }
+            .addOnFailureListener {
+                mostrarToast("Error al cargar productos")
+            }
+    }
+
+    // Guardar lote
+    private fun guardarLote() {
+        val posicionProducto = spProducto.selectedItemPosition
+        val posicionTipo = spTipo.selectedItemPosition
+
+        val nombreProducto = listaProductos.getOrNull(posicionProducto) ?: ""
+        val tipo = spTipo.selectedItem.toString()
+        val stock = etStock.text.toString().trim()
+        val fechaVenc = etFechaVencimiento.text.toString().trim()
+        val fragil = cbFragil.isChecked
+
+        // Validación
+        if (posicionProducto == 0 || posicionTipo == 0 || stock.isEmpty() || fechaVenc.isEmpty()) {
             mostrarToast("Complete todos los campos")
             return
         }
 
+        val idLote = generarIdLote()
+        val fechaRegistro = obtenerFechaActual()
+
         val lote = hashMapOf(
-            "fechaRegistro" to fecha,
+            "idLote" to idLote,
+            "producto" to nombreProducto,
+            "fechaRegistro" to fechaRegistro,
             "tipo" to tipo,
             "fragil" to fragil,
-            "idDetalle" to idDetalle,
             "stock" to stock,
-            "fechaVencimiento" to vencimiento
+            "fechaVencimiento" to fechaVenc
         )
 
         db.collection("Lotes").document(idLote)
             .set(lote)
             .addOnSuccessListener {
-                mostrarToast("Lote guardado/actualizado")
+                mostrarToast("Lote guardado correctamente")
                 limpiarCampos()
-                obtenerLotes()
             }
             .addOnFailureListener {
                 mostrarToast("Error al guardar")
             }
     }
 
-    // 🔍 Leer lotes
-    private fun obtenerLotes() {
-        db.collection("Lotes")
-            .get()
-            .addOnSuccessListener { result ->
-                loteList.clear()
-                for (doc in result) {
-                    val lote = Lote(
-                        id = doc.id,
-                        fechaRegistro = doc.getString("fechaRegistro") ?: "",
-                        tipo = doc.getString("tipo") ?: "",
-                        fragil = doc.getBoolean("fragil") ?: false,
-                        idDetalle = doc.getString("idDetalle") ?: "",
-                        stock = doc.getString("stock") ?: "0",
-                        fechaVencimiento = doc.getString("fechaVencimiento") ?: ""
-                    )
-                    loteList.add(lote)
-                }
-                adapter.notifyDataSetChanged()
-            }
+    // ID automático
+    private fun generarIdLote(): String {
+        return "L" + System.currentTimeMillis().toString()
     }
 
-    // ✍️ Cargar datos para Editar
-    private fun cargarDatosLote(lote: Lote) {
-        etIdLote.setText(lote.id)
-        etFechaRegistro.setText(lote.fechaRegistro)
-        etIdDetalle.setText(lote.idDetalle)
-        etStock.setText(lote.stock)
-        etFechaVencimiento.setText(lote.fechaVencimiento)
-
-        val tipoPos = (spTipo.adapter as ArrayAdapter<String>).getPosition(lote.tipo)
-        spTipo.setSelection(tipoPos)
-
-        cbFragil.isChecked = lote.fragil
+    // Fecha actual
+    private fun obtenerFechaActual(): String {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return sdf.format(Date())
     }
 
-    // ❌ Eliminar
-    private fun eliminarLote(lote: Lote) {
-        db.collection("Lotes").document(lote.id)
-            .delete()
-            .addOnSuccessListener {
-                mostrarToast("Lote eliminado")
-                obtenerLotes()
-            }
-            .addOnFailureListener {
-                mostrarToast("Error al eliminar")
-            }
-    }
-
-    // 🔄 Limpiar campos
+    // Limpiar
     private fun limpiarCampos() {
-        etIdLote.setText("")
-        etFechaRegistro.setText("")
-        etIdDetalle.setText("")
-        etStock.setText("")
-        etFechaVencimiento.setText("")
+        spProducto.setSelection(0)
         spTipo.setSelection(0)
+        etStock.text.clear()
+        etFechaVencimiento.text.clear()
         cbFragil.isChecked = false
     }
 
-    // 🔔 Toast personalizado
+    // Toast personalizado
     private fun mostrarToast(mensaje: String) {
-        val layout = layoutInflater.inflate(R.layout.mensaje_lotes, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(
+            R.layout.mensaje_lotes,
+            findViewById(android.R.id.content),
+            false
+        )
         val tvMensaje = layout.findViewById<TextView>(R.id.tvToastText)
         tvMensaje.text = mensaje
 

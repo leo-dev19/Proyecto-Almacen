@@ -28,7 +28,9 @@
 
     <!-- Spinner de tipo de lote -->
     <string-array name="tipo_lote">
+        <item>Seleccione un tipo</item>
         <item>Entrada</item>
         <item>Salida</item>
     </string-array>
+
 </resources>

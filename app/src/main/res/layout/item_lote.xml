@@ -11,66 +11,74 @@
     <!-- Columna de datos -->
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvIdLote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID Lote"
+            android:text=""
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="#8E24AA"/>
+            android:textColor="#8E24AA" />
 
         <TextView
             android:id="@+id/tvFechaRegistro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fecha Registro"
+            android:text=""
             android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textColor="#333333" />
+
+        <TextView
+            android:id="@+id/tvProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="#333333" />
 
         <TextView
             android:id="@+id/tvTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo: Entrada/Salida"
+            android:text=""
             android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textColor="#333333" />
 
         <TextView
             android:id="@+id/tvFragil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Frágil: Sí/No"
+            android:text=""
             android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textColor="#333333" />
 
         <TextView
             android:id="@+id/tvStock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stock: 0"
+            android:text=""
             android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textColor="#333333" />
 
         <TextView
             android:id="@+id/tvFechaVencimiento"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vence: --/--/----"
+            android:text=""
             android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textColor="#333333" />
     </LinearLayout>
 
     <!-- Columna de botones -->
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="end">
+        android:gravity="center_vertical">
 
         <Button
             android:id="@+id/btnEditar"
@@ -78,11 +86,11 @@
             android:layout_height="wrap_content"
             android:text="Editar"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#FFA000"
+            android:backgroundTint="#8E24AA"
             android:minHeight="48dp"
             android:minWidth="88dp"
             android:paddingHorizontal="12dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnEliminar"
@@ -93,7 +101,7 @@
             android:backgroundTint="#D32F2F"
             android:minHeight="48dp"
             android:minWidth="88dp"
-            android:paddingHorizontal="12dp"/>
+            android:paddingHorizontal="12dp" />
     </LinearLayout>
 
 </LinearLayout>

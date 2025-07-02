@@ -33,22 +33,27 @@ class LoteAdapter(
 
         val lote = listaLotes[position]
 
-        holder.tvIdLote.text = "ID: ${lote.id}"
-        holder.tvFechaRegistro.text = "Fecha Registro: ${lote.fechaRegistro}"
-        holder.tvTipo.text = "Tipo: ${lote.tipo}"
-        holder.tvFragil.text = "Frágil: ${if (lote.fragil) "Sí" else "No"}"
-        holder.tvStock.text = "Stock: ${lote.stock}"
-        holder.tvFechaVencimiento.text = "Vence: ${lote.fechaVencimiento}"
+        // Asignar datos a las vistas
+        holder.apply {
+            tvIdLote.text = "ID: ${lote.id}"
+            tvFechaRegistro.text = "Registrado: ${lote.fechaRegistro}"
+            tvProducto.text = "Producto: ${lote.producto}"
+            tvTipo.text = "Tipo: ${lote.tipo}"
+            tvFragil.text = "Frágil: ${if (lote.fragil) "Sí" else "No"}"
+            tvStock.text = "Stock: ${lote.stock}"
+            tvFechaVencimiento.text = "Vence: ${lote.fechaVencimiento}"
 
-        holder.btnEditar.setOnClickListener { onEditarClick(lote) }
-        holder.btnEliminar.setOnClickListener { onEliminarClick(lote) }
-
+            btnEditar.setOnClickListener { onEditarClick(lote) }
+            btnEliminar.setOnClickListener { onEliminarClick(lote) }
+        }
         return view
     }
 
+    // ViewHolder para optimizar rendimiento
     private class ViewHolder(view: View) {
         val tvIdLote: TextView = view.findViewById(R.id.tvIdLote)
         val tvFechaRegistro: TextView = view.findViewById(R.id.tvFechaRegistro)
+        val tvProducto: TextView = view.findViewById(R.id.tvProducto)
         val tvTipo: TextView = view.findViewById(R.id.tvTipo)
         val tvFragil: TextView = view.findViewById(R.id.tvFragil)
         val tvStock: TextView = view.findViewById(R.id.tvStock)

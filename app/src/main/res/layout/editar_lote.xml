@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/header_lotes">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar Lote"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#8E24AA"
+            android:layout_gravity="center"
+            android:paddingBottom="8dp" />
+
+        <!-- Producto Asociado -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Producto Asociado"
+            android:textColor="#000000"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spProductoEditar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner_lotes"
+            android:minHeight="50dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Stock -->
+        <EditText
+            android:id="@+id/etStockEditar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Stock"
+            android:inputType="number"
+            android:background="@drawable/campos_lotes"
+            android:minHeight="50dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Tipo de Lote -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Lote"
+            android:textColor="#000000"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spTipoEditar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/tipo_lote"
+            android:background="@drawable/spinner_lotes"
+            android:minHeight="50dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Frágil -->
+        <CheckBox
+            android:id="@+id/cbFragilEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Es frágil?"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Fecha de Vencimiento -->
+        <EditText
+            android:id="@+id/etFechaVencimientoEditar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fecha de Vencimiento"
+            android:inputType="date"
+            android:background="@drawable/campos_lotes"
+            android:minHeight="50dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Línea divisora -->
+        <View
+            android:layout_width="250dp"
+            android:layout_height="1.1dp"
+            android:background="#787878"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp" />
+
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnActualizar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Actualizar"
+                android:backgroundTint="#8E24AA"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:backgroundTint="#D32F2F"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
